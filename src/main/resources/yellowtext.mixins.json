@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "wtf.cheeze.yellowtext.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+      "PressableWidgetMixin",
+      "ClickableWidgetMixin",
+      "SliderWidgetMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
