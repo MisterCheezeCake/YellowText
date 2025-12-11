@@ -19,24 +19,23 @@
 package wtf.cheeze.yellowtext.mixin;
 
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.awt.*;
 
 @Mixin(PressableWidget.class)
 public abstract class PressableWidgetMixin extends ClickableWidgetMixin {
 
-	@ModifyArg(method = "renderWidget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/PressableWidget;drawMessage(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;I)V"), index = 2)
-	private int adjustColor(int color) {
-		int i = this.active ?  this.hovered ? 0xFFFFA0 : 16777215 : 10526880;
-		return i | MathHelper.ceil(this.alpha * 255.0F) << 24;
+	@ModifyArg(method = "drawLabel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/PressableWidget;drawTextWithMargin(Lnet/minecraft/client/font/DrawnTextConsumer;Lnet/minecraft/text/Text;I)V"), index = 1)
+	private Text modifyTextColor(Text text) {
+		int baseColor = this.active ? (this.hovered ? 0xFFFFA0 : 0xFFFFFF) : 0xA0A0A0;
+		int colorWithAlpha = baseColor | (MathHelper.ceil(this.alpha * 255.0F) << 24);
+
+		return Texts.withStyle(text, Style.EMPTY.withColor(colorWithAlpha));
 	}
 
 }
