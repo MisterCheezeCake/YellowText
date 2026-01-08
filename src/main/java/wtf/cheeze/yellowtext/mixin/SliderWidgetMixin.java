@@ -19,18 +19,23 @@
 package wtf.cheeze.yellowtext.mixin;
 
 import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(SliderWidget.class)
-public abstract class SliderWidgetMixin extends  ClickableWidgetMixin{
+public abstract class SliderWidgetMixin extends ClickableWidgetMixin {
 
-	@ModifyArg(method = "renderWidget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/SliderWidget;drawScrollableText(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;II)V"), index = 3)
-	private int adjustColor(int color) {
-		int i = this.active ?  this.hovered ? 0xFFFFA0 : 16777215 : 10526880;
-		return i | MathHelper.ceil(this.alpha * 255.0F) << 24;
-	}
+    @ModifyArg(method = "renderWidget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/SliderWidget;drawTextWithMargin(Lnet/minecraft/client/font/DrawnTextConsumer;Lnet/minecraft/text/Text;I)V"), index = 1)
+    private Text modifyTextColor(Text text) {
+        int baseColor = this.active ? (this.hovered ? 0xFFFFA0 : 16777215) : 10526880;
+        int colorWithAlpha = baseColor | (MathHelper.ceil(this.alpha * 255.0F) << 24);
+
+        return Texts.withStyle(text, Style.EMPTY.withColor(colorWithAlpha));
+    }
 
 }
